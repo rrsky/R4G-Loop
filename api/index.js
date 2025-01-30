@@ -5,6 +5,11 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Root Route - Shows a friendly message instead of "Cannot GET /"
+app.get("/", (req, res) => {
+    res.send("🚀 WhatsApp API is running on Vercel!");
+});
+
 // Function to send WhatsApp message
 async function sendWhatsAppMessage() {
     try {
@@ -24,16 +29,22 @@ async function sendWhatsAppMessage() {
             }
         );
         console.log("✅ Message sent successfully:", response.data);
+        return response.data;
     } catch (error) {
         console.error("❌ Error sending message:", error.response ? error.response.data : error.message);
+        throw error;
     }
 }
 
-// API Endpoint to Trigger WhatsApp Message
+// API Route to Trigger WhatsApp Message
 app.get('/send-message', async (req, res) => {
-    await sendWhatsAppMessage();
-    res.send("WhatsApp message sent!");
+    try {
+        const result = await sendWhatsAppMessage();
+        res.json({ success: true, message: "WhatsApp message sent!", response: result });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
-// Start the Express Server
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// Export the app (Vercel will use this)
+module.exports = app;
