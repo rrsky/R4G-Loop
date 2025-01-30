@@ -28,6 +28,7 @@ async function sendWhatsAppMessage() {
                 }
             }
         );
+
         console.log("✅ Message sent successfully:", response.data);
         return response.data;
     } catch (error) {
@@ -36,12 +37,15 @@ async function sendWhatsAppMessage() {
     }
 }
 
-// API Route to Trigger WhatsApp Message
+// API Route to Trigger WhatsApp Message (with Logging for cron-job.org)
 app.get('/send-message', async (req, res) => {
+    console.log(`🔍 Incoming request from: ${req.ip} at ${new Date().toISOString()}`);
+
     try {
         const result = await sendWhatsAppMessage();
         res.json({ success: true, message: "WhatsApp message sent!", response: result });
     } catch (error) {
+        console.error("❌ Error processing request:", error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
