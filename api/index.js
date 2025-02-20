@@ -14,15 +14,18 @@ app.get("/", (req, res) => {
 async function sendWhatsAppMessage() {
     try {
         const url = `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
-        console.log("🔍 Sending request to:", url); // Debugging
+        console.log("🔍 Sending request to:", url);
 
         const response = await axios.post(
             url,
             {
                 messaging_product: "whatsapp",
                 to: process.env.WHATSAPP_RECIPIENT_PHONE,
-                type: "text",
-                text: { body: "Hello! This is your daily automated WhatsApp message. 🚀" }
+                type: "template",
+                template: {
+                    name: "reminder_6questions",  // Your template name
+                    language: { code: "en" }
+                }
             },
             {
                 headers: {
@@ -32,11 +35,16 @@ async function sendWhatsAppMessage() {
             }
         );
 
-        console.log("✅ Message sent successfully:", response.data);
+        console.log("✅ Template message sent successfully:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ Error sending message:", error.response ? error.response.data : error.message);
-        throw error;
+        if (error.response) {
+            console.error("❌ Error sending message:", error.response.data);
+            return error.response.data;
+        } else {
+            console.error("❌ Error sending message:", error.message);
+            return { success: false, error: error.message };
+        }
     }
 }
 
