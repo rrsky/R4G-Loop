@@ -13,13 +13,16 @@ app.get("/", (req, res) => {
 // Function to send WhatsApp message
 async function sendWhatsAppMessage() {
     try {
+        const url = `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+        console.log("🔍 Sending request to:", url); // Debugging
+
         const response = await axios.post(
-            `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+            url,
             {
                 messaging_product: "whatsapp",
                 to: process.env.WHATSAPP_RECIPIENT_PHONE,
                 type: "text",
-                text: { body: "Hello! This is a test message from WhatsApp Cloud API 🚀" }
+                text: { body: "Hello! This is your daily automated WhatsApp message. 🚀" }
             },
             {
                 headers: {
@@ -37,7 +40,7 @@ async function sendWhatsAppMessage() {
     }
 }
 
-// API Route to Trigger WhatsApp Message (with Logging for cron-job.org)
+// API Route to Trigger WhatsApp Message (Used for cron-job.org)
 app.get('/send-message', async (req, res) => {
     console.log(`🔍 Incoming request from: ${req.ip} at ${new Date().toISOString()}`);
 
@@ -50,5 +53,10 @@ app.get('/send-message', async (req, res) => {
     }
 });
 
-// Export the app (Vercel will use this)
+// Start the Express Server (Only for local testing, Vercel handles this in deployment)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+}
+
+// Export the app (Required for Vercel deployment)
 module.exports = app;
