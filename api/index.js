@@ -10,51 +10,61 @@ app.get("/", (req, res) => {
     res.send("🚀 WhatsApp API is running on Vercel!");
 });
 
-// Function to send WhatsApp message
+// Function to send WhatsApp messages to multiple recipients
 async function sendWhatsAppMessage() {
-    try {
-        const url = `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
-        console.log("🔍 Sending request to:", url);
+    const recipients = [
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url_suffix: process.env.WHATSAPP_PERSONALIZED_URL_RR },
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url_suffix: process.env.WHATSAPP_PERSONALIZED_URL_DC }
+    ];
 
-        const response = await axios.post(
-            url,
-            {
-                messaging_product: "whatsapp",
-                to: process.env.WHATSAPP_RECIPIENT_PHONE,
-                type: "template",
-                template: {
-                    name: "reminder_6questions",  // Your template name
-                    language: { code: "en" }
-                }
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+    for (const recipient of recipients) {
+        try {
+            const url = `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+            console.log(`🔍 Sending request to ${recipient.phone} with URL suffix: ${recipient.url_suffix}`);
 
-        console.log("✅ Template message sent successfully:", response.data);
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            console.error("❌ Error sending message:", error.response.data);
-            return error.response.data;
-        } else {
-            console.error("❌ Error sending message:", error.message);
-            return { success: false, error: error.message };
+            const response = await axios.post(
+                url,
+                {
+                    messaging_product: "whatsapp",
+                    to: recipient.phone,
+                    type: "template",
+                    template: {
+                        name: "6question_with_button_multirecipient", // ✅ Using the new template
+                        language: { code: "en" },
+                        components: [
+                            {
+                                type: "button",
+                                sub_type: "url",
+                                index: 0,
+                                parameters: [
+                                    { type: "text", text: recipient.url_suffix } // ✅ Send only the unique part
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            console.log(`✅ Message sent successfully to ${recipient.phone}:`, response.data);
+        } catch (error) {
+            console.error(`❌ Error sending message to ${recipient.phone}:`, error.response ? error.response.data : error.message);
         }
     }
 }
 
-// API Route to Trigger WhatsApp Message (Used for cron-job.org)
+// API Route to Trigger WhatsApp Messages (Used for cron-job.org)
 app.get('/send-message', async (req, res) => {
     console.log(`🔍 Incoming request from: ${req.ip} at ${new Date().toISOString()}`);
 
     try {
-        const result = await sendWhatsAppMessage();
-        res.json({ success: true, message: "WhatsApp message sent!", response: result });
+        await sendWhatsAppMessage();
+        res.json({ success: true, message: "WhatsApp messages sent!" });
     } catch (error) {
         console.error("❌ Error processing request:", error.message);
         res.status(500).json({ success: false, error: error.message });
