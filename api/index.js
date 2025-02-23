@@ -19,9 +19,11 @@ async function sendWhatsAppMessage() {
 
     for (const recipient of recipients) {
         try {
+            // Construct the API request URL
             const url = `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
-            console.log(`🔍 Sending request to ${recipient.phone} with URL suffix: ${recipient.url_suffix}`);
+            console.log(`🔍 Sending request to ${url} for ${recipient.phone} with URL suffix: ${recipient.url_suffix}`);
 
+            // Send WhatsApp message
             const response = await axios.post(
                 url,
                 {
@@ -29,7 +31,7 @@ async function sendWhatsAppMessage() {
                     to: recipient.phone,
                     type: "template",
                     template: {
-                        name: "6question_with_button_multirecipient", // ✅ Using the new template
+                        name: "6question_with_button_multirecipient", // ✅ Your template name
                         language: { code: "en" },
                         components: [
                             {
@@ -37,7 +39,7 @@ async function sendWhatsAppMessage() {
                                 sub_type: "url",
                                 index: 0,
                                 parameters: [
-                                    { type: "text", text: recipient.url_suffix } // ✅ Send only the unique part
+                                    { type: "text", text: recipient.url_suffix } // ✅ Only sending the variable part of the URL
                                 ]
                             }
                         ]
