@@ -32,7 +32,7 @@ async function sendWhatsAppMessage() {
                     type: "template",
                     template: {
                         name: "6question_with_button_multirecipient", // ✅ Your template name
-                        language: { code: "en" },
+                        language: { code: "en_US" },
                         components: [
                             {
                                 type: "button",
