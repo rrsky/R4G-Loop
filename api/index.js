@@ -13,17 +13,15 @@ app.get("/", (req, res) => {
 // Function to send WhatsApp messages to multiple recipients
 async function sendWhatsAppMessage() {
     const recipients = [
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url_suffix: process.env.WHATSAPP_PERSONALIZED_URL_RR },
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url_suffix: process.env.WHATSAPP_PERSONALIZED_URL_DC }
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC }
     ];
 
     for (const recipient of recipients) {
         try {
-            // Construct the API request URL
             const url = `${process.env.WHATSAPP_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
-            console.log(`🔍 Sending request to ${url} for ${recipient.phone} with URL suffix: ${recipient.url_suffix}`);
+            console.log(`🔍 Sending request to ${recipient.phone} with URL: ${recipient.url}`);
 
-            // Send WhatsApp message
             const response = await axios.post(
                 url,
                 {
@@ -31,15 +29,13 @@ async function sendWhatsAppMessage() {
                     to: recipient.phone,
                     type: "template",
                     template: {
-                        name: "6question_with_button_multirecipient", // ✅ Your template name
-                        language: { code: "en_US" },
+                        name: "6questions_multirecipient", 
+                        language: { code: "en" }, 
                         components: [
                             {
-                                type: "button",
-                                sub_type: "url",
-                                index: 0,
+                                type: "body",
                                 parameters: [
-                                    { type: "text", text: recipient.url_suffix } // ✅ Only sending the variable part of the URL
+                                    { type: "text", text: recipient.url } 
                                 ]
                             }
                         ]
