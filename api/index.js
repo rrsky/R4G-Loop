@@ -14,7 +14,9 @@ app.get("/", (req, res) => {
 async function sendWhatsAppMessage() {
     const recipients = [
         { phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC }
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC },
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC2, url: process.env.WHATSAPP_PERSONALIZED_URL_DC2 },
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC3, url: process.env.WHATSAPP_PERSONALIZED_URL_DC3 }
     ];
 
     for (const recipient of recipients) {
@@ -29,13 +31,13 @@ async function sendWhatsAppMessage() {
                     to: recipient.phone,
                     type: "template",
                     template: {
-                        name: "6questions_multirecipient", 
-                        language: { code: "en" }, 
+                        name: "6questions_multirecipient",
+                        language: { code: "en" },
                         components: [
                             {
                                 type: "body",
                                 parameters: [
-                                    { type: "text", text: recipient.url } 
+                                    { type: "text", text: recipient.url } // ✅ Full URL inside message body
                                 ]
                             }
                         ]
