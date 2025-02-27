@@ -16,7 +16,7 @@ async function sendWhatsAppMessage(recipientGroup = "EU") {
         { key: "RR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
         { key: "DC", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC },
         { key: "DC2", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC2, url: process.env.WHATSAPP_PERSONALIZED_URL_DC2 },
-        { key: "MR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC3, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
+        { key: "MR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_MR, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
     ];
 
     const usRecipients = [
