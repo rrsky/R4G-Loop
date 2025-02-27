@@ -10,14 +10,31 @@ app.get("/", (req, res) => {
     res.send("🚀 WhatsApp API is running on Vercel!");
 });
 
-// Function to send WhatsApp messages to multiple recipients
-async function sendWhatsAppMessage() {
-    const recipients = [
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC },
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC2, url: process.env.WHATSAPP_PERSONALIZED_URL_DC2 },
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_MR, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
+// Function to send WhatsApp message based on recipient group
+async function sendWhatsAppMessage(recipientGroup = "EU") {
+    const euRecipients = [
+        { key: "RR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
+        { key: "DC", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC },
+        { key: "DC2", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC2, url: process.env.WHATSAPP_PERSONALIZED_URL_DC2 },
+        { key: "MR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC3, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
     ];
+
+    const usRecipients = [
+        { key: "VA", phone: process.env.WHATSAPP_RECIPIENT_PHONE_VA, url: process.env.WHATSAPP_PERSONALIZED_URL_VA }
+    ];
+
+    // Determine recipients based on the group
+    let recipients = [];
+    if (recipientGroup.toUpperCase() === "EU") {
+        recipients = euRecipients; 
+    } else if (recipientGroup.toUpperCase() === "US") {
+        recipients = usRecipients; 
+    }
+
+    if (recipients.length === 0) {
+        console.log(`❌ No recipients found for group: ${recipientGroup}`);
+        return { success: false, error: `No recipients found for group: ${recipientGroup}` };
+    }
 
     for (const recipient of recipients) {
         try {
@@ -37,7 +54,7 @@ async function sendWhatsAppMessage() {
                             {
                                 type: "body",
                                 parameters: [
-                                    { type: "text", text: recipient.url } // ✅ Full URL inside message body
+                                    { type: "text", text: recipient.url }
                                 ]
                             }
                         ]
@@ -58,13 +75,15 @@ async function sendWhatsAppMessage() {
     }
 }
 
-// API Route to Trigger WhatsApp Messages (Used for cron-job.org)
+// API Route to Trigger WhatsApp Messages Based on Group
 app.get('/send-message', async (req, res) => {
     console.log(`🔍 Incoming request from: ${req.ip} at ${new Date().toISOString()}`);
 
+    const recipientGroup = req.query.recipient || "EU"; // Default to EU
+
     try {
-        await sendWhatsAppMessage();
-        res.json({ success: true, message: "WhatsApp messages sent!" });
+        const results = await sendWhatsAppMessage(recipientGroup);
+        res.json({ success: true, message: `WhatsApp messages sent to: ${recipientGroup}`, results });
     } catch (error) {
         console.error("❌ Error processing request:", error.message);
         res.status(500).json({ success: false, error: error.message });
