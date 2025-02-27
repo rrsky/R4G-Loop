@@ -16,7 +16,7 @@ async function sendWhatsAppMessage() {
         { phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
         { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC },
         { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC2, url: process.env.WHATSAPP_PERSONALIZED_URL_DC2 },
-        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC3, url: process.env.WHATSAPP_PERSONALIZED_URL_DC3 }
+        { phone: process.env.WHATSAPP_RECIPIENT_PHONE_MR, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
     ];
 
     for (const recipient of recipients) {
