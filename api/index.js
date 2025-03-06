@@ -15,18 +15,24 @@ async function sendWhatsAppMessage(recipientGroup = "EU") {
     const euRecipients = [
         { key: "RR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_RR, url: process.env.WHATSAPP_PERSONALIZED_URL_RR },
         { key: "DC", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC, url: process.env.WHATSAPP_PERSONALIZED_URL_DC },
-        { key: "DC2", phone: process.env.WHATSAPP_RECIPIENT_PHONE_DC2, url: process.env.WHATSAPP_PERSONALIZED_URL_DC2 },
         { key: "MR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_MR, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
     ];
 
-    const usRecipients = [];
+    const usRecipients = [
+        { key: "VA", phone: process.env.WHATSAPP_RECIPIENT_PHONE_VA, url: process.env.WHATSAPP_PERSONALIZED_URL_VA }
+    ];
 
-    // Determine recipients based on the group
+    const uaRecipients = [
+        { key: "YT", phone: process.env.WHATSAPP_RECIPIENT_PHONE_YT, url: process.env.WHATSAPP_PERSONALIZED_URL_YT }
+    ];
+
     let recipients = [];
     if (recipientGroup.toUpperCase() === "EU") {
-        recipients = euRecipients; 
+        recipients = euRecipients;
     } else if (recipientGroup.toUpperCase() === "US") {
-        recipients = usRecipients; 
+        recipients = usRecipients;
+    } else if (recipientGroup.toUpperCase() === "UA") {
+        recipients = uaRecipients;
     }
 
     if (recipients.length === 0) {
