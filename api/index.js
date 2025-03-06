@@ -19,9 +19,7 @@ async function sendWhatsAppMessage(recipientGroup = "EU") {
         { key: "MR", phone: process.env.WHATSAPP_RECIPIENT_PHONE_MR, url: process.env.WHATSAPP_PERSONALIZED_URL_MR }
     ];
 
-    const usRecipients = [
-        { key: "VA", phone: process.env.WHATSAPP_RECIPIENT_PHONE_VA, url: process.env.WHATSAPP_PERSONALIZED_URL_VA }
-    ];
+    const usRecipients = [];
 
     // Determine recipients based on the group
     let recipients = [];
